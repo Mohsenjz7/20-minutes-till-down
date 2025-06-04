@@ -22,10 +22,17 @@ public class GameAssetManager {
     private final String Avatar3 = "Avatar/Avatar3.jpg";
     private final String Avatar4 = "Avatar/Avatar4.jpg";
 
-
     private final String cursorGame = "Icon/cursorGame.png";
     private final String cursorMenu = "Icon/cursorMenu.png";
 
+    private final String xp = "T_ChargeUp_0.png";
+    private final String enemyBullet = "EyeMonster/EyeMonster_Em.png";
+    //Death
+    private final String Death1 = "DeathFX/DeathFX_0.png";
+    private final String Death2 = "DeathFX/DeathFX_1.png";
+    private final String Death3 = "DeathFX/DeathFX_2.png";
+    private final String Death4 = "DeathFX/DeathFX_3.png";
+    private final Animation<Texture> deathAnimation = new Animation<>(0.1f, new Texture(Death1),new Texture(Death2),new Texture(Death3), new  Texture(Death4));
 
 
     //ENEMY
@@ -42,7 +49,7 @@ public class GameAssetManager {
     private final String Tentacle_1 = "Enemy/Tantacle/T_TentacleSpawn_1.png";
     private final String Tentacle_2 = "Enemy/Tantacle/T_TentacleSpawn_2.png";
     private final String Tentacle_3 = "Enemy/Tantacle/TentacleSummonAttackIndicator.png";
-    private final Animation<Texture> spawnAnimation = new Animation<>(0.2f,new Texture(Tentacle_3), new Texture(Tentacle_0), new Texture(Tentacle_1), new Texture(Tentacle_2));//
+    private final Animation<Texture> spawnAnimation = new Animation<>(0.05f,new Texture(Tentacle_3), new Texture(Tentacle_0), new Texture(Tentacle_1), new Texture(Tentacle_2));//
 
 
     //walk
@@ -52,6 +59,12 @@ public class GameAssetManager {
     private final String Tentacle_3Attack = "Enemy/Tantacle/T_TentacleEnemy_3.png";
     private final Animation<Texture> attack = new Animation<>(0.2f,new Texture(Tentacle_0Attack), new Texture(Tentacle_1Attack), new Texture(Tentacle_2Attack), new Texture(Tentacle_3Attack));
 
+    //EyeBat
+    private final String eyeBat_1 = "Enemy/EyeBat/T_EyeBat_0.png";
+    private final String eyeBat_2 = "Enemy/EyeBat/T_EyeBat_1.png";
+    private final String eyeBat_3 = "Enemy/EyeBat/T_EyeBat_2.png";
+    private final String eyeBat_4 = "Enemy/EyeBat/T_EyeBat_3.png";
+    private final Animation<Texture> eyeBat = new Animation<>(0.1f,new Texture(eyeBat_1), new Texture(eyeBat_2 ), new Texture(eyeBat_3), new Texture(eyeBat_4));
 
 
     // Revolver
@@ -495,5 +508,29 @@ public class GameAssetManager {
 
     public Animation<Texture> getAttack() {
         return attack;
+    }
+
+    public String getDeath1() {
+        return Death1;
+    }
+
+    public Animation<Texture> getDeathAnimation() {
+        return deathAnimation;
+    }
+
+    public String getXp() {
+        return xp;
+    }
+
+    public String getDeath4() {
+        return Death4;
+    }
+
+    public String getEnemyBullet() {
+        return enemyBullet;
+    }
+
+    public Animation<Texture> getEyeBat() {
+        return eyeBat;
     }
 }

@@ -189,7 +189,7 @@ public class MainMenuView implements Screen {
         stateTime = 0f;
 
 
-//        MusicManager.getInstance().playMusic(GameAssetManager.getGameAssetManager().getMainMusic(),true);
+         MusicManager.getInstance().playMusic(GameAssetManager.getGameAssetManager().getHaloMusic(),true);
     }
 
     @Override

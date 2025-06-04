@@ -9,7 +9,9 @@ public enum EnemyType {
         GameAssetManager.getGameAssetManager().getTreeAnimation(), null),
 
     Tentacle(25, null, GameAssetManager.getGameAssetManager().getAttack(),
-        GameAssetManager.getGameAssetManager().getSpawnAnimation());
+        GameAssetManager.getGameAssetManager().getSpawnAnimation()),
+
+    EyeBat(50,null,GameAssetManager.getGameAssetManager().getEyeBat(),null);
 
     private final int HP;
     private final String idle;

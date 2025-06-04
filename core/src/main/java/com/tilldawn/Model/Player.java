@@ -171,6 +171,9 @@ public class Player {
             playerHealth += health;
         }
     }
+    public void update() {
+        rect.move(playerSprite.getX(), playerSprite.getY());
+    }
 
     public int getMaxHealth() {
         return maxHealth;

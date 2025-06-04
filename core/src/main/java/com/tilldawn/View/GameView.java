@@ -1,8 +1,6 @@
 package com.tilldawn.View;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -11,11 +9,13 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.tilldawn.Control.GameController.GameController;
 import com.tilldawn.Control.GameController.PlayerController;
 import com.tilldawn.Control.GameController.WeaponController;
+import com.tilldawn.Control.MainMenuController;
 import com.tilldawn.Control.SettingMenuController;
 import com.tilldawn.Main;
 import com.tilldawn.Model.Bullet;
@@ -29,8 +29,9 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.Box2D;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Body;
+import jdk.javadoc.internal.doclets.formats.html.Table;
 
-
+import javax.imageio.stream.ImageInputStream;
 
 
 public class GameView implements Screen, InputProcessor {
@@ -39,7 +40,10 @@ public class GameView implements Screen, InputProcessor {
     private final OrthographicCamera camera = new OrthographicCamera();
     private Label timeLabel;
     private Label label;
+    private Label xpLabel;
     private Skin skin;
+    private Table deathTable;
+    private Label deathMessageLabel;
 
     private World world;
     private RayHandler rayHandler;
@@ -54,6 +58,7 @@ public class GameView implements Screen, InputProcessor {
         timeLabel = new Label("00:00", skin);
         this.skin = skin;
         label = new Label("HP :"+4, GameAssetManager.getGameAssetManager().getSkin());
+        xpLabel = new Label("XP :"+0, GameAssetManager.getGameAssetManager().getSkin());
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         controller.setView(this);
     }
@@ -68,6 +73,9 @@ public class GameView implements Screen, InputProcessor {
         Gdx.graphics.setCursor(customCursor);
 
 
+
+
+
         timeLabel = new Label("00:00", skin);
         timeLabel.setFontScale(2);
         timeLabel.setPosition(20, Gdx.graphics.getHeight() - 60);
@@ -76,6 +84,10 @@ public class GameView implements Screen, InputProcessor {
         label.setFontScale(2);
         label.setPosition(200, Gdx.graphics.getHeight() - 60);
         stage.addActor(label);
+
+        xpLabel.setFontScale(2);
+        xpLabel.setPosition(400, Gdx.graphics.getHeight() - 60);
+        stage.addActor(xpLabel);
         //shining
         Box2D.init();
         world = new World(new Vector2(0, 0), true);
@@ -107,6 +119,7 @@ public class GameView implements Screen, InputProcessor {
         controller.getWorldController().update();
         controller.updateGame();
         label.setText("HP :"+String.format("%.1f",PlayerController.getPlayer().getPlayerHealth()));
+        xpLabel.setText("XP :"+PlayerController.getPlayer().getXp());
         controller.getWeaponController().updateBullets();
 
         Main.getBatch().end();
@@ -155,11 +168,6 @@ public class GameView implements Screen, InputProcessor {
     }
 
     @Override
-    public boolean keyDown(int keycode) {
-        return false;
-    }
-
-    @Override
     public boolean keyUp(int keycode) {
         return false;
     }
@@ -204,4 +212,11 @@ public class GameView implements Screen, InputProcessor {
     public boolean scrolled(float amountX, float amountY) {
         return false;
     }
+    @Override
+    public boolean keyDown(int keycode) {
+        Main.getMain().getScreen().dispose();
+        Main.getMain().setScreen(new MainMenuView(new MainMenuController(), GameAssetManager.getGameAssetManager().getSkin(), Main.getMain()));
+        return false;
+    }
+
 }

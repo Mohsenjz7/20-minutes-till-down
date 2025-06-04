@@ -17,28 +17,54 @@ public class Enemy {
     int x;
     int y;
     private boolean hasDealtDamage = false;
+    public enum EnemyState {
+        SPAWNING,
+        ALIVE,
+        DYING
+    }
+
+    private EnemyState state = EnemyState.SPAWNING;
+    private float deathAnimTime = 0;
 
 
-    public Enemy(EnemyType enemyType, int x , int y){
+
+
+
+    public Enemy(EnemyType enemyType, int x, int y) {
         this.enemy = enemyType;
+        float scale = (enemyType == EnemyType.Tree) ? 2f : 2.5f;
+        if(enemyType == EnemyType.EyeBat){
+            scale = 1.5f;
+        }
+
         if (enemyType.getIdle() != null) {
             enemyTexture = new Texture(Gdx.files.internal(enemyType.getIdle()));
             enemySprite = new Sprite(enemyTexture);
-            enemySprite.setSize(enemyTexture.getWidth() * 3, enemyTexture.getHeight() * 3);
+            enemySprite.setSize(enemyTexture.getWidth() * scale, enemyTexture.getHeight() * scale);
         } else {
-            TextureRegion firstFrame = new TextureRegion(enemyType.getSpawnAnimation() != null ?
-                enemyType.getSpawnAnimation().getKeyFrame(0) :
-                enemyType.getWalkAnimation().getKeyFrame(0));
-
+            TextureRegion firstFrame = new TextureRegion(
+                enemyType.getSpawnAnimation() != null
+                    ? enemyType.getSpawnAnimation().getKeyFrame(0)
+                    : enemyType.getWalkAnimation().getKeyFrame(0)
+            );
             enemySprite = new Sprite(firstFrame);
-            enemySprite.setSize(firstFrame.getRegionWidth() * 3, firstFrame.getRegionHeight() * 3);
+            enemySprite.setSize(firstFrame.getRegionWidth() * 2, firstFrame.getRegionHeight() * scale);
         }
-        enemySprite.setPosition(x,y);
-        rect = new CollisionRect(x, y, enemyTexture.getWidth() * 3, enemyTexture.getHeight() * 3);
+
+        enemySprite.setPosition(x, y);
+        rect = new CollisionRect(x, y, enemySprite.getWidth()*2, enemySprite.getHeight()*2
+        );
+        if (enemyType.getSpawnAnimation() != null) {
+            this.state = EnemyState.SPAWNING;
+        } else {
+            this.state = EnemyState.ALIVE;
+        }
+
         this.enemyHealth = enemyType.getHP();
         this.x = x;
         this.y = y;
     }
+
 
     public EnemyType getEnemy() {
         return enemy;
@@ -96,5 +122,10 @@ public class Enemy {
         this.hasDealtDamage = hasDealtDamage;
     }
 
+    public EnemyState getState() { return state; }
+    public void setState(EnemyState state) { this.state = state; }
+
+    public float getDeathAnimTime() { return deathAnimTime; }
+    public void setDeathAnimTime(float t) { this.deathAnimTime = t; }
 
 }

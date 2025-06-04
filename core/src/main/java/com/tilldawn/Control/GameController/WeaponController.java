@@ -18,7 +18,7 @@ public class WeaponController {
     private float animationTime = 0f;
     private boolean isReloading = false;
     private float reloadTimer = 0f;
-    private final float RELOAD_DURATION ;
+    private final float RELOAD_DURATION;
     private boolean weaponFacingRight = true;
 
 
@@ -28,14 +28,13 @@ public class WeaponController {
     }
 
     public void update() {
-        if(PlayerController.getPlayer().isFacingLeft()){
+        if (PlayerController.getPlayer().isFacingLeft()) {
             weapon.getSmgSprite().setX(PlayerController.getPlayer().getPlayerSprite().getX());
-            weapon.getSmgSprite().setY(PlayerController.getPlayer().getPlayerSprite().getY()+15);
-        }else{
-            weapon.getSmgSprite().setX(PlayerController.getPlayer().getPlayerSprite().getX()+20);
-            weapon.getSmgSprite().setY(PlayerController.getPlayer().getPlayerSprite().getY()+15);
+            weapon.getSmgSprite().setY(PlayerController.getPlayer().getPlayerSprite().getY() + 15);
+        } else {
+            weapon.getSmgSprite().setX(PlayerController.getPlayer().getPlayerSprite().getX() + 20);
+            weapon.getSmgSprite().setY(PlayerController.getPlayer().getPlayerSprite().getY() + 15);
         }
-
 
 
         if (isReloading) {
@@ -82,7 +81,7 @@ public class WeaponController {
 
         float centerX = (float) Gdx.graphics.getWidth() / 2;
         float centerY = (float) Gdx.graphics.getHeight() / 2;
-        float angle = (float) Math.atan2(y - centerY-10, x - centerX-10);
+        float angle = (float) Math.atan2(y - centerY - 10, x - centerX - 10);
         weaponSprite.setRotation((float) (3.14 - angle * MathUtils.radiansToDegrees));
 
     }
@@ -96,8 +95,8 @@ public class WeaponController {
 
         if (weapon.getAmmo() > 0) {
             int i = 0;
-            for(int j = 0 ; j <weapon.getProjectile(); j++){
-                Bullet bullet = new Bullet(playerX, playerY, x+i*20, y+i*20,weapon.getWeaponType().getDamagePerProjectile()*weapon.getZarib());
+            for (int j = 0; j < weapon.getProjectile(); j++) {
+                Bullet bullet = new Bullet(playerX, playerY, x + i * 20, y + i * 20, weapon.getWeaponType().getDamagePerProjectile() * weapon.getZarib());
                 bullets.add(bullet);
                 i++;
             }
@@ -112,7 +111,7 @@ public class WeaponController {
         }
     }
 
-    public void reloadAnimation(){
+    public void reloadAnimation() {
         Animation<Texture> animation = weapon.getWeaponType().getAnimation();
         Texture currentFrame = animation.getKeyFrame(animationTime, false);
         weapon.getSmgSprite().setRegion(currentFrame);
@@ -131,7 +130,7 @@ public class WeaponController {
         return bullets;
     }
 
-    public static  void setBullets(ArrayList<Bullet> bullets) {
-         WeaponController.bullets = bullets;
+    public static void setBullets(ArrayList<Bullet> bullets) {
+        WeaponController.bullets = bullets;
     }
 }

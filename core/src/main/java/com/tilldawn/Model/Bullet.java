@@ -8,15 +8,15 @@ import com.tilldawn.Model.Enums.WeaponType;
 public class Bullet {
     private Texture texture = new Texture(GameAssetManager.getGameAssetManager().getBullet());
     private Sprite sprite = new Sprite(texture);
-    private float damage ;
+    private float damage;
     private float velocityX;
     private float velocityY;
-    private float speed =7;
-    private CollisionRect rect ;
+    private float speed = 10;
+    private CollisionRect rect;
 
-    public Bullet(float startX, float startY, float targetX, float targetY, float damage){
-        sprite.setSize(20, 20);
-        sprite.setPosition(startX-10, startY-10);
+    public Bullet(float startX, float startY, float targetX, float targetY, float damage) {
+        sprite.setSize(40, 40);
+        sprite.setPosition(startX - 10, startY - 10);
         this.damage = damage;
         float dx = targetX - startX;
         float dy = targetY - startY;
@@ -41,5 +41,17 @@ public class Bullet {
 
     public CollisionRect getRect() {
         return rect;
+    }
+
+    public Texture getTexture() {
+        return texture;
+    }
+
+    public void setTexture(Texture texture) {
+        this.texture = texture;
+    }
+
+    public void setSprite(Sprite sprite) {
+        this.sprite = sprite;
     }
 }

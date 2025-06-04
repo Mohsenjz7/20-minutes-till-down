@@ -12,10 +12,13 @@ public class GameController {
     private WeaponController weaponController;
     private EnemyController enemyController;
 
+    private Player player = new Player(HeroType.Diamond);
+    private WeaponType weaponType = WeaponType.REVOLVER;
+
     public void setView(GameView view) {
-        playerController = new PlayerController(new Player(HeroType.Shana));
+        playerController = new PlayerController(player);
         worldController = new WorldController(playerController);
-        weaponController = new WeaponController(new Weapon(playerController.getPlayer(), WeaponType.SHOTGUN));
+        weaponController = new WeaponController(new Weapon(playerController.getPlayer(),weaponType));
         enemyController = new EnemyController();
     }
 
@@ -36,5 +39,21 @@ public class GameController {
 
     public WorldController getWorldController() {
         return worldController;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+
+    public WeaponType getWeaponType() {
+        return weaponType;
+    }
+
+    public void setWeaponType(WeaponType weaponType) {
+        this.weaponType = weaponType;
     }
 }

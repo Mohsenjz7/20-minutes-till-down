@@ -7,19 +7,34 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.tilldawn.Main;
+import com.tilldawn.Model.*;
 import com.tilldawn.Model.Enums.Ability;
-import com.tilldawn.Model.Player;
+
+import java.util.ArrayList;
 
 public class PlayerController {
     private static Player player;
     private float abilityTimer;
     private boolean abilityTime = false;
+    private static ArrayList<XP> xpList = new ArrayList();
+    private static ArrayList<Bullet> bulletList = new ArrayList();
 
     public PlayerController(Player player) {
         PlayerController.player = player;
     }
 
+    public static ArrayList<Bullet> getBulletList() {
+        return bulletList;
+    }
+
+    public static void setBulletList(ArrayList<Bullet> bulletList) {
+        PlayerController.bulletList = bulletList;
+    }
+
     public void update() {
+        if(player.getPlayerHealth() <= 0){
+
+        }
         handlePlayerInput();
         if (abilityTime) {
             abilityTimer += Gdx.graphics.getDeltaTime();
@@ -30,18 +45,24 @@ public class PlayerController {
                 abilityTimer = 0;
                 abilityTime = false;
                 WeaponController.getWeapon().setZarib(1);
-            } else if(player.getAbility().equals(Ability.Speedy)){
+            } else if (player.getAbility().equals(Ability.Speedy)) {
                 abilityTimer = 0;
                 abilityTime = true;
-                player.setSpeed(player.getSpeed()/2);
+                player.setSpeed(player.getSpeed() / 2);
             }
         }
+        player.update();
         if (player.getState() == Player.PlayerState.RUNNING) {
             runAnimation();
         } else {
             idleAnimation();
         }
 
+        for (XP xp : xpList) {
+            xp.getSprite().draw(Main.getBatch());
+        }
+        updateXP();
+        checkBulletCollisions();
         player.getPlayerSprite().draw(Main.getBatch());
         calculateLevel();
     }
@@ -50,18 +71,18 @@ public class PlayerController {
         boolean isMoving = false;
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
 
-            if(player.getPlayerSprite().getY() <= 2650) {
+            if (player.getPlayerSprite().getY() <= 2650) {
                 player.getPlayerSprite().setY(player.getPlayerSprite().getY() + player.getSpeed());
             }
         }
         if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-            if(player.getPlayerSprite().getY() >= 30) {
+            if (player.getPlayerSprite().getY() >= 30) {
                 player.getPlayerSprite().setY(player.getPlayerSprite().getY() - player.getSpeed());
             }
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-            if(player.getPlayerSprite().getX() <= 3710) {
+            if (player.getPlayerSprite().getX() <= 3710) {
                 player.getPlayerSprite().setX(player.getPlayerSprite().getX() + player.getSpeed());
                 if (player.isFacingLeft()) {
                     player.getPlayerSprite().flip(true, false);
@@ -74,7 +95,7 @@ public class PlayerController {
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-            if(player.getPlayerSprite().getX() >= 24) {
+            if (player.getPlayerSprite().getX() >= 24) {
                 player.getPlayerSprite().setX(player.getPlayerSprite().getX() - player.getSpeed());
                 if (!player.isFacingLeft()) {
                     player.getPlayerSprite().flip(true, false);
@@ -132,6 +153,18 @@ public class PlayerController {
         }
     }
 
+    public static void updateXP() {
+        ArrayList<XP> toRemove = new ArrayList<>();
+        for (XP xp : xpList) {
+            if (xp.getRect().collidesWith(player.getRect())) {
+                player.setXp(player.getXp() + 1);
+                toRemove.add(xp);
+            }
+        }
+        xpList.removeAll(toRemove);
+    }
+
+
     public static Player getPlayer() {
         return player;
     }
@@ -152,7 +185,7 @@ public class PlayerController {
                 player.setSpeed(PlayerController.player.getSpeed() * 2);
             } else if (player.getAbility().equals(Ability.Progrease)) {
                 WeaponController.getWeapon().setProjectile(WeaponController.getWeapon().getProjectile() + 1);
-            } else if (player.getAbility().equals(Ability.Vitality)){
+            } else if (player.getAbility().equals(Ability.Vitality)) {
                 player.setMaxHealth(PlayerController.player.getMaxHealth() + 1);
             }
         }
@@ -164,5 +197,28 @@ public class PlayerController {
 
     public void setAbilityTime(boolean abilityTime) {
         this.abilityTime = abilityTime;
+    }
+
+    public static ArrayList<XP> getXpList() {
+        return xpList;
+    }
+
+    public static void setXpList(ArrayList<XP> xpList) {
+        PlayerController.xpList = xpList;
+    }
+
+    private void checkBulletCollisions() {
+        ArrayList<Bullet> bullets = bulletList;
+        ArrayList<Bullet> bulletsToRemove = new ArrayList<>();
+
+        for (Bullet bullet : bullets) {
+            if(bullet.getRect().collidesWith(player.getRect())) {
+                bulletsToRemove.add(bullet);
+                player.setPlayerHealth(player.getPlayerHealth() - bullet.getDamage());
+            }
+        }
+
+        bullets.removeAll(bulletsToRemove);
+
     }
 }

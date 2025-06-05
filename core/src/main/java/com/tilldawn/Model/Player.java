@@ -22,7 +22,7 @@ public class Player {
     private int zarib = 0;
     private boolean isPlayerIdle = true;
     private boolean isPlayerRunning = false;
-
+    private int kill = 0;
     public Player(HeroType hero){
         this.hero = hero;playerTexture = new Texture(Gdx.files.internal(hero.getTEXTURE()));
         playerSprite = new Sprite(playerTexture);
@@ -143,6 +143,14 @@ public class Player {
 
     public void setZarib(int zarib) {
         this.zarib = zarib;
+    }
+
+    public int getKill() {
+        return kill;
+    }
+
+    public void setKill(int kill) {
+        this.kill = kill;
     }
 
     public enum PlayerState {

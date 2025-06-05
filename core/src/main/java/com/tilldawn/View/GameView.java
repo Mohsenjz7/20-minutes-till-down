@@ -6,10 +6,13 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.tilldawn.Control.GameController.GameController;
@@ -29,7 +32,6 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.Box2D;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Body;
-import jdk.javadoc.internal.doclets.formats.html.Table;
 
 import javax.imageio.stream.ImageInputStream;
 
@@ -43,8 +45,9 @@ public class GameView implements Screen, InputProcessor {
     private Label xpLabel;
     private Skin skin;
     private Table deathTable;
-    private Label deathMessageLabel;
+    private boolean isPaused = false;
 
+    private Label deathMessageLabel;
     private World world;
     private RayHandler rayHandler;
     private PointLight playerLight;
@@ -56,6 +59,7 @@ public class GameView implements Screen, InputProcessor {
     public GameView(GameController controller, Skin skin) {
         this.controller = controller;
         timeLabel = new Label("00:00", skin);
+        deathTable = new Table();
         this.skin = skin;
         label = new Label("HP :"+4, GameAssetManager.getGameAssetManager().getSkin());
         xpLabel = new Label("XP :"+0, GameAssetManager.getGameAssetManager().getSkin());
@@ -66,14 +70,43 @@ public class GameView implements Screen, InputProcessor {
     @Override
     public void show() {
         stage = new Stage(new ScreenViewport());
-        Gdx.input.setInputProcessor(this);
+        InputMultiplexer multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(stage);
+        multiplexer.addProcessor(this);
+        Gdx.input.setInputProcessor(multiplexer);
+
 
         Pixmap pixmap = new Pixmap(Gdx.files.internal(GameAssetManager.getGameAssetManager().getCursorGame()));
         Cursor customCursor = Gdx.graphics.newCursor(pixmap, 0, 0);
         Gdx.graphics.setCursor(customCursor);
 
+        deathTable = new Table();
+        deathTable.setFillParent(true);
+        deathTable.center();
+        deathTable.setVisible(false);
+
+        deathMessageLabel = new Label("", skin);
+        deathMessageLabel.setFontScale(3);
+        deathMessageLabel.setColor(Color.RED);
+
+        deathTable.add(deathMessageLabel).pad(20).row();
+
+        TextButton backButton = new TextButton("Back", skin);
+        backButton.getLabel().setFontScale(1.5f);
+        backButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Gdx.app.postRunnable(() -> {
+                    Main.getMain().getScreen().dispose();
+                    Main.getMain().setScreen(new MainMenuView(new MainMenuController(), skin, Main.getMain()));
+                });
+            }
+        });
 
 
+        deathTable.add(backButton).pad(10);
+
+        stage.addActor(deathTable);
 
 
         timeLabel = new Label("00:00", skin);
@@ -110,17 +143,39 @@ public class GameView implements Screen, InputProcessor {
     @Override
     public void render(float delta) {
         ScreenUtils.clear(0, 0, 0, 1);
-        GameTimer.update(delta);
         timeLabel.setText(GameTimer.getFormattedTime());
-
 
         Main.getBatch().setProjectionMatrix(camera.combined);
         Main.getBatch().begin();
-        controller.getWorldController().update();
-        controller.updateGame();
+        if (!isPaused) {
+            GameTimer.update(delta);
+            controller.getWorldController().update();
+            controller.updateGame();
+            controller.getWeaponController().updateBullets();
+        }
+
+        if (PlayerController.getPlayer().getPlayerHealth() <= 0 && !deathTable.isVisible()) {
+            isPaused = true;
+
+            String playerName = "guest";
+            if(Main.getMain().getCurrentUser() != null){
+                playerName = Main.getMain().getCurrentUser().getUserName();
+            }
+
+            int kills = PlayerController.getPlayer().getKill();
+            int xp = PlayerController.getPlayer().getXp();
+
+            String message = String.format("💀 YOU DIED 💀\n\nPlayer: %s\nKills: %d\nXP: %d\n", playerName, kills, xp);
+
+            deathMessageLabel.setText(message);
+            deathMessageLabel.setFontScale(3f);
+
+            deathTable.setVisible(true);
+        }
+
+
         label.setText("HP :"+String.format("%.1f",PlayerController.getPlayer().getPlayerHealth()));
         xpLabel.setText("XP :"+PlayerController.getPlayer().getXp());
-        controller.getWeaponController().updateBullets();
 
         Main.getBatch().end();
         camera.position.set(PlayerController.getPlayer().getPlayerSprite().getX(),
@@ -214,9 +269,10 @@ public class GameView implements Screen, InputProcessor {
     }
     @Override
     public boolean keyDown(int keycode) {
-        Main.getMain().getScreen().dispose();
-        Main.getMain().setScreen(new MainMenuView(new MainMenuController(), GameAssetManager.getGameAssetManager().getSkin(), Main.getMain()));
+//        Main.getMain().getScreen().dispose();
+//        Main.getMain().setScreen(new MainMenuView(new MainMenuController(), GameAssetManager.getGameAssetManager().getSkin(), Main.getMain()));
         return false;
     }
+
 
 }

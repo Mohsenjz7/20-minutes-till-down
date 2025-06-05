@@ -239,6 +239,7 @@ public class EnemyController {
                     enemy.setEnemyHealth(enemy.getEnemyHealth() - bullet.getDamage());
                     bulletsToRemove.add(bullet);
                     if (enemy.getEnemyHealth() <= 0) {
+                        PlayerController.getPlayer().setKill(PlayerController.getPlayer().getKill() + 1);
                         enemy.setState(Enemy.EnemyState.DYING);
                         enemy.setDeathAnimTime(0);
                     }
